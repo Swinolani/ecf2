@@ -1,0 +1,225 @@
+import axios from 'axios';
+import React, {useEffect, useRef, useState} from 'react';
+import {
+  Button,
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
+
+export default function ListPokemon({navigation}) {
+  const [pokemon, setPokemon] = useState('');
+  const [pokemonListFilter, setPokemonListFilter] = useState([]);
+  const [error, setError] = useState(null);
+  const buttonFilterType = useRef();
+  function handleChangeText(value) {
+    setPokemon(value);
+  }
+
+  function estContenu(chaine1, chaine2) {
+    const chaine1Minuscule = chaine1.toLowerCase();
+    const chaine2Minuscule = chaine2.toLowerCase();
+
+    if (chaine1Minuscule.includes(chaine2Minuscule)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  useEffect(() => {
+    async function fetchPokemon() {
+      try {
+        const response = await axios.get(
+          'https://pokeapi.co/api/v2/pokemon?limit=2000',
+        );
+        const dataFilter = response.data.results.filter(
+          item =>
+            estContenu(item.name, pokemon) && item.name.split('-').length == 1,
+        );
+        setPokemonListFilter(dataFilter);
+        setError(null);
+      } catch (error) {
+        setError(
+          "Une erreur s'est produite lors de la récupération de la liste des Pokémon.",
+        );
+      }
+    }
+
+    if (pokemon !== '') {
+      fetchPokemon();
+    } else {
+      setPokemonListFilter([]);
+    }
+  }, [pokemon]);
+
+  // FILTRE A REVOIR
+  function filterByType() {
+    if (buttonFilterType.current.props.title == 'Filtrer par types') {
+      console.log(pokemonListFilter);
+      //   setPokemonListFilter(
+      //     pokemonListFilter.sort((pokemonA, pokemonB) => {
+      //       // Comparaison des types de Pokémon (à ajuster selon la structure de données réelle)
+      //       const typeA = pokemonA.types.toLowerCase();
+      //       const typeB = pokemonB.types.toLowerCase();
+      //       if (typeA < typeB) {
+      //         return -1;
+      //       }
+      //       if (typeA > typeB) {
+      //         return 1;
+      //       }
+      //       return 0;
+      //     }),
+      //   );
+    }
+  }
+  // Mettre en place le switch pour le dark mode
+  return (
+    <View style={styles.container}>
+      <Image
+        style={styles.logo}
+        source={{
+          uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/International_Pok%C3%A9mon_logo.svg/1200px-International_Pok%C3%A9mon_logo.svg.png',
+        }}
+        width={450}
+        height={170}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Entrez le nom du pokemon"
+        value={pokemon}
+        onChangeText={handleChangeText}
+      />
+      <Button
+        title="Filtrer par types"
+        onPress={filterByType}
+        ref={buttonFilterType}></Button>
+      {error && <Text style={styles.error}>{error}</Text>}
+      <ScrollView contentContainerStyle={styles.pokemonList}>
+        {pokemonListFilter.map((item, index) => (
+          <View key={index} style={styles.pokemonRow}>
+            <View style={styles.pokemonColumn}>
+              {pokemonListFilter[index * 2] && (
+                <Pressable
+                  onPress={() => {
+                    navigation.navigate('pokemonDetails', {
+                      id: pokemonListFilter[index * 2].url.split('/')[6],
+                    });
+                  }}>
+                  <View style={styles.pokemonItem}>
+                    <Image
+                      style={styles.pokemonImage}
+                      source={{
+                        uri: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${
+                          pokemonListFilter[index * 2].url.split('/')[6]
+                        }.png`,
+                      }}
+                    />
+                    <View style={styles.pokemonInfo}>
+                      <Text style={styles.pokemonName}>
+                        {pokemonListFilter[index * 2].name}
+                      </Text>
+                      <Text style={styles.pokemonId}>
+                        #{pokemonListFilter[index * 2].url.split('/')[6]}
+                      </Text>
+                    </View>
+                  </View>
+                </Pressable>
+              )}
+            </View>
+            <View style={styles.pokemonColumn}>
+              {pokemonListFilter[index * 2 + 1] && (
+                <Pressable
+                  onPress={() => {
+                    navigation.navigate('pokemonDetails', {
+                      id: pokemonListFilter[index * 2 + 1].url.split('/')[6],
+                    });
+                  }}>
+                  <View style={styles.pokemonItem}>
+                    <Image
+                      style={styles.pokemonImage}
+                      source={{
+                        uri: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${
+                          pokemonListFilter[index * 2 + 1].url.split('/')[6]
+                        }.png`,
+                      }}
+                    />
+                    <View style={styles.pokemonInfo}>
+                      <Text style={styles.pokemonName}>
+                        {pokemonListFilter[index * 2 + 1].name}
+                      </Text>
+                      <Text style={styles.pokemonId}>
+                        #{pokemonListFilter[index * 2 + 1].url.split('/')[6]}
+                      </Text>
+                    </View>
+                  </View>
+                </Pressable>
+              )}
+            </View>
+          </View>
+        ))}
+      </ScrollView>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {},
+  input: {
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 5,
+    padding: 10,
+    marginVertical: 10,
+    width: '80%',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  },
+  error: {
+    color: 'red',
+    marginTop: 10,
+  },
+  pokemonList: {
+    marginTop: 10,
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  pokemonRow: {
+    flexDirection: 'row',
+  },
+  pokemonColumn: {
+    flex: 1,
+    paddingHorizontal: 5,
+  },
+  pokemonItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+  },
+  pokemonImage: {
+    width: 100,
+    height: 100,
+    marginRight: 10,
+  },
+  pokemonInfo: {
+    flex: 1,
+  },
+  pokemonName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  pokemonId: {
+    fontSize: 14,
+    color: '#666',
+  },
+
+  logo: {},
+});
