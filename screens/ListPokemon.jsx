@@ -21,7 +21,7 @@ export default function ListPokemon({navigation}) {
   function handleChangeText(value) {
     setPokemon(value);
   }
-  // Fonction qui verifie si la chaine2 est inclus dans la chaine 1
+  // Fonction qui verifie si la chaine 2 est inclus dans la chaine 1
   function estContenu(chaine1, chaine2) {
     const chaine1Minuscule = chaine1.toLowerCase();
     const chaine2Minuscule = chaine2.toLowerCase();
@@ -32,10 +32,13 @@ export default function ListPokemon({navigation}) {
       return false;
     }
   }
+  // Envoyer la donnée au composant du bouton switch
   function handleSendDataButton(dataFromChild) {
     setEnabled(dataFromChild);
   }
+  // use Effect
   useEffect(() => {
+    // Recuperer la liste des pokemons
     async function fetchPokemon() {
       try {
         const response = await axios.get(
@@ -53,7 +56,7 @@ export default function ListPokemon({navigation}) {
         );
       }
     }
-
+    // Si l'imput est vide , on ne fetchera pas l'api
     if (pokemon !== '') {
       fetchPokemon();
     } else {
@@ -61,26 +64,8 @@ export default function ListPokemon({navigation}) {
     }
   }, [pokemon]);
 
-  // FILTRE A REVOIR
-  function filterByType() {
-    if (buttonFilterType.current.props.title == 'Filtrer par types') {
-      console.log(pokemonListFilter);
-      //   setPokemonListFilter(
-      //     pokemonListFilter.sort((pokemonA, pokemonB) => {
-      //       // Comparaison des types de Pokémon (à ajuster selon la structure de données réelle)
-      //       const typeA = pokemonA.types.toLowerCase();
-      //       const typeB = pokemonB.types.toLowerCase();
-      //       if (typeA < typeB) {
-      //         return -1;
-      //       }
-      //       if (typeA > typeB) {
-      //         return 1;
-      //       }
-      //       return 0;
-      //     }),
-      //   );
-    }
-  }
+  // LA FONCTION N EST PAS VALIDE !
+  function filterByType() {}
 
   return (
     <View

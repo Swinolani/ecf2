@@ -26,10 +26,12 @@ export default function PokemonDetails({route}) {
     }
     return false;
   }
+  // Fonction qui supprime un element d'un tableau
   function removeChaineFromArray(chaine, tableau) {
     return tableau.filter(item => item !== chaine);
   }
-  // LE CRUD POUR LA GESTION DU STORAGE
+  // Le CRUD
+  // Ajout du pokemon que l'on recupere par le params dans le storage
   const addPokemonListAsync = async () => {
     try {
       let listPokemon = await AsyncStorage.getItem('listPokemon');
@@ -42,7 +44,7 @@ export default function PokemonDetails({route}) {
       console.log(error);
     }
   };
-
+  // Suppression du pokemon par un update de la liste des pokemon dans le storage
   const deletePokemonListAsync = async () => {
     try {
       let listPokemon = await AsyncStorage.getItem('listPokemon');
@@ -56,8 +58,8 @@ export default function PokemonDetails({route}) {
     }
   };
 
-  // BOUTON PERMETTANT DAJOUTER OU DE SUPPRIMER UN POKEMON DE SA COLLECTION (async storage)
-  // JE NAI PAS REUSSI A FAIRE AUTREMENT POUR LACTUALISATION DE LA COLLECTION LORS DE LAJOUT OU DE LA SUPPRESSION
+  // bouton pour ajouter ou suppprimer un pokemon de la collection
+  // JE NAI PAS REUSSI A FAIRE AUTREMENT POUR LACTUALISATION DE LA COLLECTION LORS DE LAJOUT OU DE LA SUPPRESSION !
   function addCollection() {
     if (!buttonClicked) {
       setButtonClicked(true);
@@ -71,7 +73,9 @@ export default function PokemonDetails({route}) {
       RNRestart.Restart();
     }
   }
+  // Use effect
   useEffect(() => {
+    // Récupération des détails du pokemon par son id
     const fetchPokemonDetails = async () => {
       try {
         const response = await axios.get(
@@ -82,6 +86,8 @@ export default function PokemonDetails({route}) {
         console.error('Error fetching Pokemon details:', error);
       }
     };
+    // On contrôle l'état du bouton selon la présence ou non du pokemon recuperé au préalable par l'id avec axios,
+    // c'est utile pour que l'on visualise bien que le pokemon est ou non dans le pokedex
     if (isChaineInArray(idPokemon, AsyncStorage.getItem('listPokemon'))) {
       setButtonClicked(false);
     }
@@ -105,14 +111,13 @@ export default function PokemonDetails({route}) {
           );
           const initialPokemonDetails = initialPokemonResponse.data;
 
-          // Récupération de la chaîne d'évolution
+          // Récupération des évolutions
           const speciesUrl = initialPokemonDetails.species.url;
           const speciesResponse = await axios.get(speciesUrl);
           const evolutionChainUrl = speciesResponse.data.evolution_chain.url;
           const evolutionChainResponse = await axios.get(evolutionChainUrl);
           const evolutionChain = evolutionChainResponse.data.chain;
 
-          // Fonction récursive pour récupérer les images de toutes les évolutions
           const fetchAllEvolutionName = async chain => {
             const evolutionName = [];
 
@@ -121,7 +126,6 @@ export default function PokemonDetails({route}) {
 
               evolutionName.push({name: pokemonName});
 
-              // Récupérer les images des évolutions suivantes
               for (const nextEvolution of evolution.evolves_to) {
                 await fetchEvolution(nextEvolution);
               }

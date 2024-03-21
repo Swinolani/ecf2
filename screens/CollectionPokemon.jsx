@@ -9,7 +9,7 @@ export default function CollectionPokemon() {
   const [loading, setLoading] = useState(true);
   const [isEnabled, setEnabled] = useState(false);
 
-  //Suppeime le pokemon ciblé de l'async storage avec un update en tranplin
+  //Supprime le pokemon ciblé de l'async storage avec un update en tranplin
   async function supprimer(index) {
     try {
       const updatedCollection = listPokemonCollection.filter(
