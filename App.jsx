@@ -2,27 +2,47 @@ import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
 import PokemonDetails from './screens/PokemonDetails';
 import ListPokemon from './screens/ListPokemon';
 import CollectionPokemon from './screens/CollectionPokemon';
-
-// package necessaire navigation :
-// npm install @react-navigation/native
-// npm install react-native-screens react-native-safe-area-context
-// npm i @react-navigation/native-stack
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const Stack = createNativeStackNavigator();
-const Tab = createBottomTabNavigator();
+const Tab = createMaterialBottomTabNavigator();
 
 function MyTabs() {
   return (
-    <Tab.Navigator>
-      <Tab.Screen name="Accueil" component={ListPokemon} />
+    <Tab.Navigator
+      activeColor="red" // Couleur rouge pour les icônes en focus
+      inactiveColor="#333" // Couleur grise pour les icônes non focus
+      barStyle={{backgroundColor: 'white'}}>
+      <Tab.Screen
+        name="Accueil"
+        component={ListPokemon}
+        options={{
+          tabBarIcon: ({color, size}) => (
+            <Icon name="home" size={24} color={color} />
+          ),
+
+          tabBarLabelStyle: {
+            display: 'none',
+          },
+          unmountOnBlur: true, // Ajoutez cette ligne
+        }}
+      />
       <Tab.Screen
         name="Collection"
         component={CollectionPokemon}
-        options={{title: 'Mon pokedex'}}
+        options={{
+          tabBarIcon: ({color, size}) => (
+            <Icon name="collections" size={24} color={color} />
+          ),
+          tabBarLabelStyle: {
+            display: 'none',
+          },
+          unmountOnBlur: true, // Ajoutez cette ligne
+        }}
       />
     </Tab.Navigator>
   );

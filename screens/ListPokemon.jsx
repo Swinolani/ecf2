@@ -10,11 +10,13 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import SwitchButton from '../components/SwitchButton';
 
 export default function ListPokemon({navigation}) {
   const [pokemon, setPokemon] = useState('');
   const [pokemonListFilter, setPokemonListFilter] = useState([]);
   const [error, setError] = useState(null);
+  const [isEnabled, setEnabled] = useState(false);
   const buttonFilterType = useRef();
   function handleChangeText(value) {
     setPokemon(value);
@@ -30,7 +32,9 @@ export default function ListPokemon({navigation}) {
       return false;
     }
   }
-
+  function handleSendDataButton(dataFromChild) {
+    setEnabled(dataFromChild);
+  }
   useEffect(() => {
     async function fetchPokemon() {
       try {
@@ -77,9 +81,11 @@ export default function ListPokemon({navigation}) {
       //   );
     }
   }
-  // Mettre en place le switch pour le dark mode
+
   return (
-    <View style={styles.container}>
+    <View
+      style={{backgroundColor: isEnabled ? 'black' : 'white', height: '100%'}}>
+      <SwitchButton onSendDataButton={handleSendDataButton}></SwitchButton>
       <Image
         style={styles.logo}
         source={{
@@ -89,10 +95,11 @@ export default function ListPokemon({navigation}) {
         height={170}
       />
       <TextInput
-        style={styles.input}
+        style={{...styles.input, color: isEnabled ? 'white' : 'black'}}
         placeholder="Entrez le nom du pokemon"
         value={pokemon}
         onChangeText={handleChangeText}
+        placeholderTextColor={isEnabled ? 'white' : 'black'}
       />
       <Button
         title="Filtrer par types"
@@ -120,10 +127,18 @@ export default function ListPokemon({navigation}) {
                       }}
                     />
                     <View style={styles.pokemonInfo}>
-                      <Text style={styles.pokemonName}>
+                      <Text
+                        style={{
+                          ...styles.pokemonName,
+                          color: isEnabled ? 'white' : 'black',
+                        }}>
                         {pokemonListFilter[index * 2].name}
                       </Text>
-                      <Text style={styles.pokemonId}>
+                      <Text
+                        style={{
+                          ...styles.pokemonId,
+                          color: isEnabled ? 'white' : 'black',
+                        }}>
                         #{pokemonListFilter[index * 2].url.split('/')[6]}
                       </Text>
                     </View>
@@ -149,10 +164,18 @@ export default function ListPokemon({navigation}) {
                       }}
                     />
                     <View style={styles.pokemonInfo}>
-                      <Text style={styles.pokemonName}>
+                      <Text
+                        style={{
+                          ...styles.pokemonName,
+                          color: isEnabled ? 'white' : 'black',
+                        }}>
                         {pokemonListFilter[index * 2 + 1].name}
                       </Text>
-                      <Text style={styles.pokemonId}>
+                      <Text
+                        style={{
+                          ...styles.pokemonId,
+                          color: isEnabled ? 'white' : 'black',
+                        }}>
                         #{pokemonListFilter[index * 2 + 1].url.split('/')[6]}
                       </Text>
                     </View>
@@ -168,7 +191,6 @@ export default function ListPokemon({navigation}) {
 }
 
 const styles = StyleSheet.create({
-  container: {},
   input: {
     borderWidth: 1,
     borderColor: 'gray',

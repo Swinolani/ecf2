@@ -2,11 +2,13 @@ import {ScrollView, StyleSheet, Text, View, Image, Button} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import SwitchButton from '../components/SwitchButton';
 
 export default function CollectionPokemon() {
   const [listPokemonCollection, setListPokemonCollection] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [isEnabled, setEnabled] = useState(false);
+
   //Quand j'essaye de supprimer, cela supprime tous les pokemons de mon pokedex d'un coup !
   async function supprimer(index) {
     try {
@@ -23,6 +25,7 @@ export default function CollectionPokemon() {
     }
   }
   useEffect(() => {
+    setEnabled(false);
     const fetchData = async () => {
       try {
         const storedPokemonIds = await AsyncStorage.getItem('listPokemon');
@@ -47,14 +50,22 @@ export default function CollectionPokemon() {
     };
 
     fetchData();
-  });
+  }, []);
+  function handleSendDataButton(dataFromChild) {
+    setEnabled(dataFromChild);
+  }
 
   return (
-    <View style={styles.container}>
+    <View
+      style={{
+        backgroundColor: isEnabled ? 'black' : 'white',
+        height: '100%',
+      }}>
       {loading ? (
         <Text>Loading...</Text>
       ) : (
         <ScrollView>
+          <SwitchButton onSendDataButton={handleSendDataButton}></SwitchButton>
           {listPokemonCollection.map(pokemon => (
             <View key={pokemon.id} style={styles.pokemonContainer}>
               <View>
@@ -67,12 +78,32 @@ export default function CollectionPokemon() {
                       .front_default,
                   }}
                 />
-                <Text style={styles.pokemonName}>{pokemon.name}</Text>
-                <Text style={styles.pokemonId}>ID: {pokemon.id}</Text>
-                <Text style={styles.pokemonType}>
+                <Text
+                  style={{
+                    ...styles.pokemonName,
+                    color: isEnabled ? 'white' : 'black',
+                  }}>
+                  {pokemon.name}
+                </Text>
+                <Text
+                  style={{
+                    ...styles.pokemonId,
+                    color: isEnabled ? 'white' : 'black',
+                  }}>
+                  ID: {pokemon.id}
+                </Text>
+                <Text
+                  style={{
+                    ...styles.pokemonType,
+                    color: isEnabled ? 'white' : 'black',
+                  }}>
                   Types: {pokemon.types.map(type => type.type.name).join(', ')}
                 </Text>
-                <Text style={styles.pokemonStats}>
+                <Text
+                  style={{
+                    ...styles.pokemonStats,
+                    color: isEnabled ? 'white' : 'black',
+                  }}>
                   HP:{' '}
                   {
                     pokemon.stats.find(stat => stat.stat.name === 'hp')
@@ -80,7 +111,6 @@ export default function CollectionPokemon() {
                   }
                 </Text>
               </View>
-              {/* bouton supprimer marche pas */}
               <Button
                 color={'#B22222'}
                 title="Supprimer de la collection"
@@ -96,7 +126,6 @@ export default function CollectionPokemon() {
 }
 
 const styles = StyleSheet.create({
-  container: {},
   title: {
     fontSize: 24,
     fontWeight: 'bold',
