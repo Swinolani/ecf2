@@ -96,7 +96,7 @@ export default function PokemonDetails({route}) {
       } catch (error) {
         console.log(error);
       }
-      /// En construction ----------------
+
       const fetchEvolutionName = async () => {
         try {
           // Requête pour récupérer les détails du Pokémon initial
@@ -139,7 +139,6 @@ export default function PokemonDetails({route}) {
       };
 
       fetchEvolutionName();
-      /// -------------------------
     };
 
     fetchData();

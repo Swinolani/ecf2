@@ -21,7 +21,7 @@ export default function ListPokemon({navigation}) {
   function handleChangeText(value) {
     setPokemon(value);
   }
-
+  // Fonction qui verifie si la chaine2 est inclus dans la chaine 1
   function estContenu(chaine1, chaine2) {
     const chaine1Minuscule = chaine1.toLowerCase();
     const chaine2Minuscule = chaine2.toLowerCase();

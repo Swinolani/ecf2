@@ -9,7 +9,7 @@ export default function CollectionPokemon() {
   const [loading, setLoading] = useState(true);
   const [isEnabled, setEnabled] = useState(false);
 
-  //Quand j'essaye de supprimer, cela supprime tous les pokemons de mon pokedex d'un coup !
+  //Suppeime le pokemon ciblé de l'async storage avec un update en tranplin
   async function supprimer(index) {
     try {
       const updatedCollection = listPokemonCollection.filter(
@@ -25,7 +25,7 @@ export default function CollectionPokemon() {
     }
   }
   useEffect(() => {
-    setEnabled(false);
+    // Recuperation de tous les pokemons de l'async storage
     const fetchData = async () => {
       try {
         const storedPokemonIds = await AsyncStorage.getItem('listPokemon');
@@ -51,6 +51,7 @@ export default function CollectionPokemon() {
 
     fetchData();
   }, []);
+  // Recuperation de la data du bouton grâce à un emitter
   function handleSendDataButton(dataFromChild) {
     setEnabled(dataFromChild);
   }
@@ -141,6 +142,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
     marginBottom: 10,
+    width: '95%',
+    marginLeft: 'auto',
+    marginRight: 'auto',
   },
   pokemonName: {
     fontSize: 18,
